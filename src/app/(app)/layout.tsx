@@ -1,7 +1,6 @@
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-import { getCloudflareContext } from "@opennextjs/cloudflare";
-import { createAuth } from "@/lib/auth";
+import { auth } from "@/lib/auth";
 import { Sidebar } from "@/components/layout/sidebar";
 import { TopBar } from "@/components/layout/top-bar";
 
@@ -10,9 +9,6 @@ export default async function AppLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const { env } = await getCloudflareContext({ async: true });
-  const auth = createAuth();
-
   const ctxHeaders = await headers();
   const session = await auth.api.getSession({
     headers: ctxHeaders,

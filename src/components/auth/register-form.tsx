@@ -3,111 +3,133 @@
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useState } from "react";
-import { signUp } from "@/lib/auth-client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import {
+  Field,
+  FieldDescription,
+  FieldGroup,
+  FieldLabel,
+  FieldError,
+} from "@/components/ui/field";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { registerSchema } from "@/schemas/auth";
+import { z } from "zod";
+import { registerAction } from "@/actions/auth";
+
+type RegisterFormValues = z.infer<typeof registerSchema>;
 
 export function RegisterForm() {
   const router = useRouter();
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [serverError, setServerError] = useState<string | null>(null);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError(null);
-    setIsLoading(true);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<RegisterFormValues>({
+    resolver: zodResolver(registerSchema),
+    defaultValues: {
+      name: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+    },
+  });
 
-    const { error } = await signUp.email({
-      name,
-      email,
-      password,
-    });
+  const onSubmit = async (data: RegisterFormValues) => {
+    setServerError(null);
 
-    if (error) {
-      setError(error.message || "Failed to create account");
-      setIsLoading(false);
-    } else {
+    const result = await registerAction(data);
+
+    if (result.success) {
       router.push("/login");
+    } else {
+      setServerError(result.error || "Failed to create account");
     }
   };
 
   return (
     <Card className="w-full max-w-md">
-      <CardHeader className="space-y-1">
-        <CardTitle className="text-2xl font-bold">
-          Create an account
-        </CardTitle>
+      <CardHeader className="text-center">
+        <CardTitle className="text-2xl font-bold">Create an account</CardTitle>
         <CardDescription>Enter your details to get started</CardDescription>
       </CardHeader>
-      <form onSubmit={handleSubmit}>
-        <CardContent className="space-y-4">
-          {error && (
-            <div className="p-3 text-sm text-destructive bg-destructive/10 rounded-md">
-              {error}
+      <CardContent>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          {serverError && (
+            <div className="p-3 mb-4 text-sm text-destructive bg-destructive/10 rounded-md">
+              {serverError}
             </div>
           )}
-          <div className="space-y-2">
-            <Label htmlFor="name">Name</Label>
-            <Input
-              id="name"
-              type="text"
-              placeholder="John Doe"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              required
-              disabled={isLoading}
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
-            <Input
-              id="email"
-              type="email"
-              placeholder="you@example.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              disabled={isLoading}
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="password">Password</Label>
-            <Input
-              id="password"
-              type="password"
-              placeholder="••••••••"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              minLength={8}
-              disabled={isLoading}
-            />
-          </div>
-        </CardContent>
-        <CardFooter className="flex flex-col gap-4">
-          <Button type="submit" className="w-full" disabled={isLoading}>
-            {isLoading ? "Creating account..." : "Create account"}
-          </Button>
-          <p className="text-sm text-muted-foreground text-center">
-            Already have an account?{" "}
-            <Link href="/login" className="text-primary hover:underline">
-              Sign in
-            </Link>
-          </p>
-        </CardFooter>
-      </form>
+          <FieldGroup>
+            <Field>
+              <FieldLabel htmlFor="name">Name</FieldLabel>
+              <Input
+                id="name"
+                placeholder="John Doe"
+                disabled={isSubmitting}
+                {...register("name")}
+              />
+              <FieldError errors={[errors.name]} />
+            </Field>
+            <Field>
+              <FieldLabel htmlFor="email">Email</FieldLabel>
+              <Input
+                id="email"
+                type="email"
+                placeholder="you@example.com"
+                disabled={isSubmitting}
+                {...register("email")}
+              />
+              <FieldError errors={[errors.email]} />
+            </Field>
+            <Field>
+              <FieldLabel htmlFor="password">Password</FieldLabel>
+              <Input
+                id="password"
+                type="password"
+                placeholder="••••••••"
+                disabled={isSubmitting}
+                {...register("password")}
+              />
+              <FieldError errors={[errors.password]} />
+            </Field>
+            <Field>
+              <FieldLabel htmlFor="confirmPassword">
+                Confirm Password
+              </FieldLabel>
+              <Input
+                id="confirmPassword"
+                type="password"
+                placeholder="••••••••"
+                disabled={isSubmitting}
+                {...register("confirmPassword")}
+              />
+              <FieldError errors={[errors.confirmPassword]} />
+            </Field>
+            <Field>
+              <Button type="submit" className="w-full" disabled={isSubmitting}>
+                {isSubmitting ? "Creating account..." : "Create account"}
+              </Button>
+              <FieldDescription className="text-center">
+                Already have an account?{" "}
+                <Link href="/login" className="text-primary hover:underline">
+                  Sign in
+                </Link>
+              </FieldDescription>
+            </Field>
+          </FieldGroup>
+        </form>
+      </CardContent>
     </Card>
   );
 }

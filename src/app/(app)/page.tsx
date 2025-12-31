@@ -1,13 +1,9 @@
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-import { getCloudflareContext } from "@opennextjs/cloudflare";
-import { createAuth } from "@/lib/auth";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { auth } from "@/lib/auth";
 
 export default async function DashboardPage() {
-  const { env } = await getCloudflareContext({ async: true });
-  const auth = createAuth();
-
   const ctxHeaders = await headers();
   const session = await auth.api.getSession({
     headers: ctxHeaders,

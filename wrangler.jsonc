@@ -20,11 +20,6 @@
 		// see https://opennext.js.org/cloudflare/howtos/image
 		"binding": "IMAGES"
 	},
-    "d1_databases": [{
-        "binding": "DB",
-        "database_name": "dhania",
-        "database_id": ""
-    }],
 	"services": [
 		{
 			// Self-reference service binding, the service name must match the worker name

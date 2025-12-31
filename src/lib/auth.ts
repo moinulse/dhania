@@ -1,10 +1,10 @@
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import { drizzle } from "drizzle-orm/d1";
+import { getDb } from "@/db";
 import * as schema from "@/db/schema";
 
-export function createAuth(db: D1Database) {
-    const drizzleDb = drizzle(db, { schema });
+export function createAuth() {
+    const drizzleDb = getDb();
 
     return betterAuth({
         database: drizzleAdapter(drizzleDb, {

@@ -1,9 +1,9 @@
-import { timestamps } from "@/db/column.helper";
+import { timestamps, id } from "@/db/column.helper";
 import { DEFAULT_SYSTEM_ROLE, SYSTEM_ROLES } from "@/db/enums";
 import { sqliteTable, text, integer } from "drizzle-orm/sqlite-core";
 
 export const user = sqliteTable("user", {
-    id: text("id").primaryKey(),
+    id,
     name: text("name").notNull(),
     email: text("email").notNull().unique(),
     emailVerified: integer("email_verified", { mode: "boolean" }).notNull().default(false),
@@ -13,7 +13,7 @@ export const user = sqliteTable("user", {
 });
 
 export const session = sqliteTable("session", {
-    id: text("id").primaryKey(),
+    id,
     expiresAt: integer("expires_at", { mode: "timestamp" }).notNull(),
     token: text("token").notNull().unique(),
     createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
@@ -26,7 +26,7 @@ export const session = sqliteTable("session", {
 });
 
 export const account = sqliteTable("account", {
-    id: text("id").primaryKey(),
+    id,
     accountId: text("account_id").notNull(),
     providerId: text("provider_id").notNull(),
     userId: text("user_id")
@@ -44,7 +44,7 @@ export const account = sqliteTable("account", {
 });
 
 export const verification = sqliteTable("verification", {
-    id: text("id").primaryKey(),
+    id,
     identifier: text("identifier").notNull(),
     value: text("value").notNull(),
     expiresAt: integer("expires_at", { mode: "timestamp" }).notNull(),

@@ -1,4 +1,4 @@
-import { timestamps } from "@/db/column.helper";
+import { timestamps, id } from "@/db/column.helper";
 import { workItems } from "@/db/schema/projects";
 import { user } from "@/db/schema/auth";
 import { index, integer, sqliteTable, text, uniqueIndex } from "drizzle-orm/sqlite-core";
@@ -6,7 +6,7 @@ import { index, integer, sqliteTable, text, uniqueIndex } from "drizzle-orm/sqli
 export const githubInstallations = sqliteTable(
   "github_installations",
   {
-    id: text("id").primaryKey(),
+    id,
     githubInstallationId: integer("github_installation_id").notNull(),
     githubAccountLogin: text("github_account_login").notNull(),
     ...timestamps,
@@ -22,7 +22,7 @@ export const githubInstallations = sqliteTable(
 export const githubRepos = sqliteTable(
   "github_repos",
   {
-    id: text("id").primaryKey(),
+    id,
     installationId: text("installation_id")
       .notNull()
       .references(() => githubInstallations.id, { onDelete: "cascade" }),
@@ -32,8 +32,7 @@ export const githubRepos = sqliteTable(
     name: text("name").notNull(),
     defaultBranch: text("default_branch").notNull().default("main"),
 
-    createdAt: text("created_at").notNull(),
-    updatedAt: text("updated_at").notNull(),
+    ...timestamps,
   },
   (t) => ([
     uniqueIndex("gh_repos_repo_id_ux").on(t.githubRepoId),
@@ -45,7 +44,7 @@ export const githubRepos = sqliteTable(
 export const gitBranchLinks = sqliteTable(
   "git_branch_links",
   {
-    id: text("id").primaryKey(),
+    id,
     workItemId: text("work_item_id")
       .notNull()
       .references(() => workItems.id, { onDelete: "cascade" }),
@@ -75,7 +74,7 @@ export const gitBranchLinks = sqliteTable(
 export const pullRequestLinks = sqliteTable(
   "pull_request_links",
   {
-    id: text("id").primaryKey(),
+    id,
     workItemId: text("work_item_id")
       .notNull()
       .references(() => workItems.id, { onDelete: "cascade" }),
@@ -100,7 +99,7 @@ export const pullRequestLinks = sqliteTable(
 export const commitLinks = sqliteTable(
   "commit_links",
   {
-    id: text("id").primaryKey(),
+    id,
     workItemId: text("work_item_id")
       .notNull()
       .references(() => workItems.id, { onDelete: "cascade" }),

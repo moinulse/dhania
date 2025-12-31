@@ -1,9 +1,9 @@
-import { timestamps } from "@/db/column.helper";
+import { timestamps, id } from "@/db/column.helper";
 import { user } from "@/db/schema/auth";
 import { type AnySQLiteColumn, index, integer, primaryKey, sqliteTable, text, uniqueIndex } from "drizzle-orm/sqlite-core";
 
 export const projects = sqliteTable("projects", {
-    id: text("id").primaryKey(),
+    id,
     key: text("key").notNull(),
     name: text("name").notNull(),
     description: text("description"),
@@ -35,7 +35,7 @@ export const projectMemberships = sqliteTable("project_memberships", {
 ])
 
 export const workItems = sqliteTable("work_items", {
-    id: text("id").primaryKey(),
+    id,
     projectId: text("project_id").notNull().references(() => projects.id, { onDelete: "cascade" }),
 
     number: integer("number").notNull(),
@@ -76,7 +76,7 @@ export const workItems = sqliteTable("work_items", {
 export const comments = sqliteTable(
   "comments",
   {
-    id: text("id").primaryKey(),
+    id,
     workItemId: text("work_item_id")
       .notNull()
       .references(() => workItems.id, { onDelete: "cascade" }),
@@ -97,7 +97,7 @@ export const comments = sqliteTable(
 export const attachments = sqliteTable(
   "attachments",
   {
-    id: text("id").primaryKey(),
+    id,
     workItemId: text("work_item_id")
       .notNull()
       .references(() => workItems.id, { onDelete: "cascade" }),

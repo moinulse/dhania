@@ -1,11 +1,32 @@
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarHeader,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+} from "@/components/ui/sidebar";
 import Link from "next/link";
 
-export function Sidebar() {
+export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
-    <aside className="w-64 border-r border-border bg-sidebar h-full flex flex-col">
-      <div className="p-4 border-b border-border">
-        <h1 className="text-xl font-bold text-sidebar-foreground">Dhania</h1>
-      </div>
+    <Sidebar collapsible="offcanvas" {...props}>
+      <SidebarHeader>
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              asChild
+              className="data-[slot=sidebar-menu-button]:!p-1.5"
+            >
+              <Link href="/">
+                {/* <IconInnerShadowTop className="!size-5" /> */}
+                <span className="text-base font-semibold">Dhania</span>
+              </Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </SidebarHeader>
       <nav className="flex-1 p-4">
         <ul className="space-y-1">
           <li>
@@ -73,6 +94,6 @@ export function Sidebar() {
           </li>
         </ul>
       </nav>
-    </aside>
+    </Sidebar>
   );
 }

@@ -1,8 +1,9 @@
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
-import { Sidebar } from "@/components/layout/sidebar";
+import { AppSidebar } from "@/components/layout/app-sidebar";
 import { TopBar } from "@/components/layout/top-bar";
+import { SidebarProvider } from "@/components/ui/sidebar";
 
 export default async function AppLayout({
   children,
@@ -20,11 +21,20 @@ export default async function AppLayout({
 
   return (
     <div className="min-h-screen flex bg-background">
-      <Sidebar />
-      <div className="flex-1 flex flex-col">
-        <TopBar userName={session.user.name} />
-        <main className="flex-1 p-6">{children}</main>
-      </div>
+      <SidebarProvider
+        style={
+          {
+            "--sidebar-width": "calc(var(--spacing) * 72)",
+            "--header-height": "calc(var(--spacing) * 12)",
+          } as React.CSSProperties
+        }
+      >
+        <AppSidebar variant="inset" />
+        <div className="flex-1 flex flex-col">
+          <TopBar userName={session.user.name} />
+          <main className="flex-1 p-6">{children}</main>
+        </div>
+      </SidebarProvider>
     </div>
   );
 }

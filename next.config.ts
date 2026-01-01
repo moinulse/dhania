@@ -6,9 +6,8 @@ import { initOpenNextCloudflareForDev } from "@opennextjs/cloudflare";
 initOpenNextCloudflareForDev();
 
 const nextConfig: NextConfig = {
-	// typedRoutes: true,
+  // typedRoutes: true,
+  reactCompiler: true,
 };
 
 export default nextConfig;
-
-
